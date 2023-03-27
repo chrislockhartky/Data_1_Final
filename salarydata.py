@@ -7,18 +7,31 @@ Original file is located at
     https://colab.research.google.com/drive/1Ob_4LoINyFt5TEgk1Z-PIe2Ve6uskeXF
 """
 
-#
-#
-#
-
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt 
+from matplotlib import rcParams
+
+rcParams["figure.figsize"]= 17, 6
+
+#This section is for retrieving and cleaning the data
+#This url makes it so you don't have to load up the file as long as you have an internet connection
 url="https://raw.githubusercontent.com/chrislockhartky/Data_1_Final/main/original_csv/MetroSalary.csv"
-#Need to create a dataframe
 df=pd.read_csv(url)
-#Specific employee names are irrelevant and may lead to privacy concerns
-#df.drop([columns='Employee_Name'], inplace=False, axis=1)
 df=df[df.CalYear==2022]
+#Specific employee names are irrelevant and may lead to privacy concerns
+#Other columns are dropped due to being out of scope for the project. We're concerned with 
 df=df.drop(columns=["Employee_Name","Incentive_Allowance","Other","Annual_Rate"])
-df.head()
+
+#This section is for creating a graph that tells us how much each department spends on payroll, in other words all money spent on wages.
+#Fist line is so we can actually order the graph by value.
+PayrollOrder=df.groupby(["Department"])["YTD_Total"].sum().sort_values(ascending=False).index
+sns.barplot(x="Department", y="YTD_Total", data=df, estimator=sum, order=PayrollOrder)
+plt.xlabel("")
+plt.ylabel("Payroll Budget", size=16)
+plt.title("Payroll per Department in 2022", size=24)
+plt.xticks(rotation= 45, ha="right", size=13)
+plt.yticks();
+#Need to improve the yticks so that they're more in line with something that you would expect.
 
